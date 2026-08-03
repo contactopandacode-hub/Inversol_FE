@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\COBEC\COBEC.csproj" />
+    <ProjectReference Include="..\CODAT\CODAT.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DLLFacturacionElectronicona">
+      <HintPath>..\COMPONENTES\DLLFacturacionElectronicona.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
