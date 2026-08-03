@@ -74,6 +74,7 @@ namespace ServicioRSNetCore.Controllers.Funciones
                 str_globaligv = documentos.IGVGlobal;
                 str_pVersionUBL = documentos.VersionUbl;
                 str_pTipoCodigoProducto = documentos.TipoCodigoProducto;
+                string str_ubicacionCSV = configuration["RutaAdjuntos"];
 
 
                 //Recorremos detalle
@@ -215,6 +216,7 @@ namespace ServicioRSNetCore.Controllers.Funciones
                 decimal dec_DetraccionPorcentaje = 0;
                 string ls_detraccioncodigo = string.Empty;
                 decimal ldc_PrecioUnitarioOriginalIGV = 0;
+                
                 //Fin de variables
 
 
@@ -863,6 +865,9 @@ namespace ServicioRSNetCore.Controllers.Funciones
 
                 str_ComprobanteTipoDocumentoIdentidad = documentos.ClienteTipoDocumento;
 
+                if (request.numeroDocumento.Substring(0, 1) == "F")
+                    str_ComprobanteTipoDocumentoIdentidad = "6";
+
                 dec_ComprobanteImporteTotal = documentos.MontoTotal;
 
                 /* Descuento Global */
@@ -975,7 +980,7 @@ namespace ServicioRSNetCore.Controllers.Funciones
                 str_ComprobanteVendedor = documentos.ComprobanteVendedor;
 
                 if (str_ComprobanteTipoDocumentoIdentidad == "0")
-                    str_ComprobanteTipoOperacion = "013";
+                    str_ComprobanteTipoOperacion = "0103";
 
                 str_Url = documentos.Url;
 
@@ -1050,7 +1055,6 @@ namespace ServicioRSNetCore.Controllers.Funciones
                 string ls_resultado = string.Empty;
 
                 EFACTRegistro eFACTRegistro = new EFACTRegistro();
-                //eFACTRegistro.ObtenerAdjunto("d67d104f-fe6a-4281-a951-407b40dc1ed5", compania.DocumentoFiscal, compania.URLPassword, str_Url, "C:\\PANDA\\INVERSOL\\CSV\\miarchivo.pdf", "1");
 
                 if (str_ComprobanteTipoComprobante == "03" || str_ComprobanteTipoComprobante == "01")
                 {
@@ -1114,7 +1118,7 @@ namespace ServicioRSNetCore.Controllers.Funciones
                                 str_ComprobantePrePagoTrama,
                                 str_ComprobanteNotaDocRefTrama,
                                 "",//str_ComprobanteMotivoDocumento, 
-                                "C:\\PANDA\\INVERSOL\\CSV\\",//str_UbicacionXML,
+                                str_ubicacionCSV,//str_UbicacionXML,
                                 str_Url,
                                 str_TipoFormaPago,
                                 str_GlosaFormaPago,
@@ -1208,7 +1212,7 @@ namespace ServicioRSNetCore.Controllers.Funciones
                                 str_ComprobantePrePagoTrama,
                                 str_ComprobanteNotaDocRefTrama,
                                 str_ComprobanteNotaSustento,//str_ComprobanteMotivoDocumento, 
-                                "C:\\PANDA\\INVERSOL\\CSV\\",//str_UbicacionXML,
+                                str_ubicacionCSV,//str_UbicacionXML,
                                 str_Url,
                                 str_TipoFormaPago,
                                 str_GlosaFormaPago,

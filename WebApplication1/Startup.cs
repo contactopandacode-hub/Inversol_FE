@@ -60,9 +60,9 @@ namespace WebApplication1
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "Interface de Ordenes Compra",
+                    Title = "Interface de Facturación Electrónica",
                     Version = "v1",
-                    Description = "REST API  para Grupo EDO",
+                    Description = "REST API  para Grupo Inversol",
                     Contact = new OpenApiContact()
                     {
                         Name = "Walter Roman Parraga",
@@ -116,7 +116,7 @@ namespace WebApplication1
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Interface Orden Compras.");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Facturación Electronica");
             });
         }
 
