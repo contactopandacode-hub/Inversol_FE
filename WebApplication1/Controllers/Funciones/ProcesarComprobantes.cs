@@ -979,8 +979,8 @@ namespace ServicioRSNetCore.Controllers.Funciones
                 str_VendedorCodigo = documentos.VendedorCodigo;
                 str_ComprobanteVendedor = documentos.ComprobanteVendedor;
 
-                if (str_ComprobanteTipoDocumentoIdentidad == "0")
-                    str_ComprobanteTipoOperacion = "0103";
+                //if (str_ComprobanteTipoDocumentoIdentidad == "0")
+                //    str_ComprobanteTipoOperacion = "0103";
 
                 str_Url = documentos.Url;
 
