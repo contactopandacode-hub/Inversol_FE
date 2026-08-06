@@ -1,11 +1,15 @@
 ﻿using COBE;
 using COBEC;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Xml;
 
@@ -130,6 +134,91 @@ namespace ServicioRSNetCore.Controllers.Funciones
                 obj_retorno.mensaje = ex.Message;
             }
             return obj_retorno;
+        }
+
+        public byte[] ObtenerAdjuntosByte(COBEC_DatosAdjunto request)
+        {
+            string str_Resultado = string.Empty;
+            COBEc_Error obj_retorno = new COBEc_Error();
+            byte[] pdfBytes = new byte[0];
+            try
+            {
+                using (var obj_Cliente = new HttpClient())
+                {
+                    string str_ServicioUsuarioClave = "client" + ":" + "secret";
+                    byte[] byt_UsuarioClave = Encoding.UTF8.GetBytes(str_ServicioUsuarioClave.ToCharArray());
+
+                    obj_Cliente.DefaultRequestHeaders.Accept.Clear();
+                    obj_Cliente.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                    obj_Cliente.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byt_UsuarioClave));
+
+                    var obj_Parametros = new Dictionary<string, string>();
+                    obj_Parametros.Add("grant_type", "password");
+                    obj_Parametros.Add("username", request.username);
+                    obj_Parametros.Add("password", request.password);
+
+                    System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+
+                    var obj_Response = obj_Cliente.PostAsync(request.url + "/oauth/token", new FormUrlEncodedContent(obj_Parametros)).Result;
+
+                    str_Resultado = obj_Response.Content.ReadAsStringAsync().Result;
+                    var obj_Resultado = JObject.Parse(str_Resultado);
+
+                    if (obj_Resultado["error"] != null)
+                    {
+
+                        //obj_retorno.codigo = "01";
+                        //obj_retorno.mensaje = obj_Resultado["error"].ToString() + "-" + obj_Resultado["error_description"].ToString();
+                    }
+
+                    string str_Token = obj_Resultado["access_token"].ToString();
+
+                    using (var pdfClient = new HttpClient())
+                    {
+                        pdfClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", str_Token);
+                        pdfClient.DefaultRequestHeaders.Accept.Clear();
+                        pdfClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/pdf"));
+
+                        string pdfUrl = string.Empty;
+
+                        if (request.tipo == "1")
+                            pdfUrl = request.url + "/v1/pdf/" + request.identificador;
+
+                        if (request.tipo == "2")
+                            pdfUrl = request.url + "/v1/xml/" + request.identificador;
+
+                        if (request.tipo == "3")
+                            pdfUrl = request.url + "/v1/cdr/" + request.identificador;
+
+                        var pdfResponse = pdfClient.GetAsync(pdfUrl).Result;
+                        pdfResponse.EnsureSuccessStatusCode();
+
+                       pdfBytes = pdfResponse.Content.ReadAsByteArrayAsync().Result;
+
+
+                        File.WriteAllBytes("C:\\PANDA\\INVERSOL\\prueba.pdf", pdfBytes);
+
+                        //str_Resultado = "00|Adjunto descargando.";
+                        return pdfBytes;                       
+                    }
+                }
+
+            }
+            catch (HttpRequestException ex)
+            {
+
+                //obj_retorno.codigo = "01";
+                //obj_retorno.mensaje = "Error al descargar el Adjunto: " + ex.Message;
+            }
+            catch (Exception ex)
+            {
+               
+
+                //obj_retorno.codigo = "02";
+                //obj_retorno.mensaje = "Error no controlado: " + ex.Message;
+            }
+
+            return pdfBytes;
         }
     }
 }

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+﻿using Azure;
+using COBE;
+using COBEC;
+using CODAT;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,13 +9,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer.Query.ExpressionTranslators.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
-using COBE;
-using CODAT;
-
-using COBEC;
 using Serilog;
 using ServicioRSNetCore.Controllers.Funciones;
 using ServicioRSNetCore.GuiaRemision;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 
 namespace ServicioRSNetCore.Controllers
@@ -81,7 +82,7 @@ namespace ServicioRSNetCore.Controllers
             try
             {
                 obj_error = obj_procesar.GeneraToken(request);
-                if(obj_error.codigo == "00")
+                if (obj_error.codigo == "00")
                 {
                     obj_error = obj_procesar.EfactConsultaEstado(request.identificador, obj_error.mensaje);
                 }
@@ -94,6 +95,24 @@ namespace ServicioRSNetCore.Controllers
             }
 
             return Ok(obj_error);
+        }
+
+        [HttpPost("ObtenerAdjuntosByte")]
+        public IActionResult ObtenerAdjuntosByte([FromBody] COBEC_DatosAdjunto request)
+        {
+            COBEc_Error obj_error = new COBEc_Error();
+            byte[] pdfBytes = new byte[0];
+            EFACTGeneral obj_procesar = new EFACTGeneral(configuration, this.context);
+            try
+            {
+                pdfBytes = obj_procesar.ObtenerAdjuntosByte(request);
+                return File(pdfBytes, "application/pdf");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("ERROR|" + e.Message);
+            }
+
         }
     }
 }
