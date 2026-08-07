@@ -77,14 +77,15 @@ namespace ServicioRSNetCore.Controllers
         [HttpPost("ObtenerEstado")]
         public ActionResult ObtenerEstado([FromBody] COBEC_Generico request)
         {
-            COBEc_Error obj_error = new COBEc_Error();
+            COBEC_EstadoReturn obj_error = new COBEC_EstadoReturn();
+            COBEc_Error obj_token = new COBEc_Error();
             EFACTGeneral obj_procesar = new EFACTGeneral(configuration, this.context);
             try
             {
-                obj_error = obj_procesar.GeneraToken(request);
-                if (obj_error.codigo == "00")
+                obj_token = obj_procesar.GeneraToken(request);
+                if(obj_token.codigo == "00")
                 {
-                    obj_error = obj_procesar.EfactConsultaEstado(request.identificador, obj_error.mensaje);
+                    obj_error = obj_procesar.EfactConsultaEstado(request.identificador, obj_token.mensaje);
                 }
             }
             catch (Exception e)
@@ -105,7 +106,7 @@ namespace ServicioRSNetCore.Controllers
             EFACTGeneral obj_procesar = new EFACTGeneral(configuration, this.context);
             try
             {
-                pdfBytes = obj_procesar.ObtenerAdjuntosByte(request);
+                pdfBytes = obj_procesar.ObtenerAdjuntosByte(request);                
                 return File(pdfBytes, "application/pdf");
             }
             catch (Exception e)

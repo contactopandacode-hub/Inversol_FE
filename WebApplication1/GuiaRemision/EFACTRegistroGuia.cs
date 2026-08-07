@@ -252,24 +252,6 @@ namespace ServicioRSNetCore.GuiaRemision
                 stb_Resultado.AppendFormat("Shipment/Delivery/DeliveryAddress/ID{0}", str_separador);
                 stb_ResultadoDat.AppendFormat("{0}{1}", str_ubigeoPtoLLegada, str_separador);
 
-                stb_Resultado.AppendFormat("Shipment/Delivery/DeliveryAddress/CitySubdivisionName{0}", str_separador);
-                stb_ResultadoDat.AppendFormat("{0}{1}", "", str_separador);
-
-                stb_Resultado.AppendFormat("Shipment/Delivery/DeliveryAddress/CityName{0}", str_separador);
-                stb_ResultadoDat.AppendFormat("{0}{1}", str_AlmacenLlegadaProvincia, str_separador);
-
-                stb_Resultado.AppendFormat("Shipment/Delivery/DeliveryAddress/CountrySubentity{0}", str_separador);
-                stb_ResultadoDat.AppendFormat("{0}{1}", str_AlmacenLlegadaDepartamento, str_separador);
-
-                stb_Resultado.AppendFormat("Shipment/Delivery/DeliveryAddress/District{0}", str_separador);
-                stb_ResultadoDat.AppendFormat("{0}{1}", str_AlmacenLlegadaDistrito, str_separador);
-
-                stb_Resultado.AppendFormat("Shipment/Delivery/DeliveryAddress/AddressLine/Line{0}", str_separador);
-                stb_ResultadoDat.AppendFormat("{0}{1}", CambiarCaracterEspecial(str_direccionPtoLLegada), str_separador);
-
-                //stb_Resultado.AppendFormat("Shipment/Delivery/DeliveryAddress/Country/IdentificationCode{0}", str_separador);
-                //stb_ResultadoDat.AppendFormat("{0}{1}", "PE", str_separador);
-
                 if (str_motivoTraslado == "04")
                 {
                     stb_Resultado.AppendFormat("Shipment/Delivery/DeliveryAddress/AddressTypeCode{0}", str_separador);
@@ -286,9 +268,44 @@ namespace ServicioRSNetCore.GuiaRemision
 
                 }
 
+                stb_Resultado.AppendFormat("Shipment/Delivery/DeliveryAddress/CitySubdivisionName{0}", str_separador);
+                stb_ResultadoDat.AppendFormat("{0}{1}", "", str_separador);
+
+                stb_Resultado.AppendFormat("Shipment/Delivery/DeliveryAddress/CityName{0}", str_separador);
+                stb_ResultadoDat.AppendFormat("{0}{1}", str_AlmacenLlegadaProvincia, str_separador);
+
+                stb_Resultado.AppendFormat("Shipment/Delivery/DeliveryAddress/CountrySubentity{0}", str_separador);
+                stb_ResultadoDat.AppendFormat("{0}{1}", str_AlmacenLlegadaDepartamento, str_separador);
+
+                stb_Resultado.AppendFormat("Shipment/Delivery/DeliveryAddress/District{0}", str_separador);
+                stb_ResultadoDat.AppendFormat("{0}{1}", str_AlmacenLlegadaDistrito, str_separador);
+
+                stb_Resultado.AppendFormat("Shipment/Delivery/DeliveryAddress/AddressLine/Line{0}", str_separador);
+                stb_ResultadoDat.AppendFormat("{0}{1}", CambiarCaracterEspecial(str_direccionPtoLLegada), str_separador);
+
+                stb_Resultado.AppendFormat("Shipment/Delivery/DeliveryAddress/Country/IdentificationCode{0}", str_separador);
+                stb_ResultadoDat.AppendFormat("{0}{1}", "PE", str_separador);
+
+
 
                 stb_Resultado.AppendFormat("Shipment/Delivery/Despatch/DespatchAddress/ID{0}", str_separador);
                 stb_ResultadoDat.AppendFormat("{0}{1}", str_ubigeoPtoPartida, str_separador);
+
+                if (str_motivoTraslado == "04")
+                {
+                    stb_Resultado.AppendFormat("Shipment/Delivery/Despatch/DespatchAddress/AddressTypeCode{0}", str_separador);
+                    stb_ResultadoDat.AppendFormat("{0}{1}", str_codigoPtoPartida.Trim(), str_separador);
+
+                    stb_Resultado.AppendFormat("Shipment/Delivery/Despatch/DespatchAddress/AddressTypeCode/@listID{0}", str_separador);
+                    stb_ResultadoDat.AppendFormat("{0}{1}", str_numeroDocumentoPtoPartida.Trim(), str_separador);
+
+                    //stb_Resultado.AppendFormat("Shipment/Delivery/Despatch/DespatchAddress/LocationCoordinate/LatitudeDegreesMeasure{0}", str_separador);
+                    //stb_ResultadoDat.AppendFormat("{0}{1}", "12.44", str_separador);
+
+                    //stb_Resultado.AppendFormat("Shipment/Delivery/Despatch/DespatchAddress/LocationCoordinate/LongitudeDegreesMeasure{0}", str_separador);
+                    //stb_ResultadoDat.AppendFormat("{0}{1}", "134.00", str_separador);
+
+                }
 
                 stb_Resultado.AppendFormat("Shipment/Delivery/Despatch/DespatchAddress/CitySubdivisionName{0}", str_separador);
                 stb_ResultadoDat.AppendFormat("{0}{1}", "", str_separador);
@@ -307,24 +324,7 @@ namespace ServicioRSNetCore.GuiaRemision
 
                 stb_Resultado.AppendFormat("Shipment/Delivery/Despatch/DespatchAddress/Country/IdentificationCode{0}", str_separador);
                 stb_ResultadoDat.AppendFormat("{0}{1}", "PE", str_separador);
-
-                if (str_motivoTraslado == "04")
-                {
-                    stb_Resultado.AppendFormat("Shipment/Delivery/Despatch/DespatchAddress/AddressTypeCode{0}", str_separador);
-                    stb_ResultadoDat.AppendFormat("{0}{1}", str_codigoPtoPartida.Trim(), str_separador);
-
-                    stb_Resultado.AppendFormat("Shipment/Delivery/Despatch/DespatchAddress/AddressTypeCode/@listID{0}", str_separador);
-                    stb_ResultadoDat.AppendFormat("{0}{1}", str_numeroDocumentoPtoPartida.Trim(), str_separador);
-
-                    //stb_Resultado.AppendFormat("Shipment/Delivery/Despatch/DespatchAddress/LocationCoordinate/LatitudeDegreesMeasure{0}", str_separador);
-                    //stb_ResultadoDat.AppendFormat("{0}{1}", "12.44", str_separador);
-
-                    //stb_Resultado.AppendFormat("Shipment/Delivery/Despatch/DespatchAddress/LocationCoordinate/LongitudeDegreesMeasure{0}", str_separador);
-                    //stb_ResultadoDat.AppendFormat("{0}{1}", "134.00", str_separador);
-
-                }
-
-
+                
                 stb_Resultado.AppendFormat("Shipment/Delivery/Despatch/DespatchParty/AgentParty/PartyLegalEntity/CompanyID{0}", str_separador);
                 stb_ResultadoDat.AppendFormat("{0}{1}", str_numeroAutorizacionTrans.Trim(), str_separador);
 

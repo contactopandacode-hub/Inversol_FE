@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -72,11 +73,11 @@ namespace ServicioRSNetCore.Controllers.Funciones
             return obj_retorno;
         }
 
-        public COBEc_Error EfactConsultaEstado(string identificador, string par_token)
+        public COBEC_EstadoReturn EfactConsultaEstado(string identificador, string par_token)
         {
             string str_Resultado = string.Empty;
             string str_Token = "-";
-            COBEc_Error obj_retorno = new COBEc_Error();
+            COBEC_EstadoReturn obj_retorno = new COBEC_EstadoReturn();
 
             try
             {
@@ -94,25 +95,37 @@ namespace ServicioRSNetCore.Controllers.Funciones
                         var obj_XmlSunat = new XmlDocument();
                         obj_XmlSunat.LoadXml(str_Resultado);
 
-                        string str_CodigoRespuestaSunat = obj_XmlSunat.GetElementsByTagName("ns3:DocumentResponse")[0].ChildNodes[0].ChildNodes[1].InnerText;
-                        string str_DescripcionRespuestaSunat = obj_XmlSunat.GetElementsByTagName("ns3:DocumentResponse")[0].ChildNodes[0].ChildNodes[2].InnerText;
-
                         var nsManager = new XmlNamespaceManager(obj_XmlSunat.NameTable);
-                        nsManager.AddNamespace("ns3", "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2");
-                        nsManager.AddNamespace("bc", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2");
+                        nsManager.AddNamespace("ar", "urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2");
+                        nsManager.AddNamespace("cac", "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2");
+                        nsManager.AddNamespace("cbc", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2");
 
-                        XmlNode hashNode = obj_XmlSunat.SelectSingleNode("//ns3:DocumentResponse/ns3:DocumentReference/ns3:Attachment/ns3:ExternalReference/bc:DocumentHash", nsManager);
+                        // ── cac:Response ──
+                        XmlNode responseNode = obj_XmlSunat.SelectSingleNode("//cac:DocumentResponse/cac:Response", nsManager);
 
-                        string str_hashCode = string.Empty;
-                        if (hashNode != null)
+                        string str_ReferenceId = responseNode?.SelectSingleNode("cbc:ReferenceID", nsManager)?.InnerText ?? string.Empty;
+                        string str_CodigoRespuestaSunat = responseNode?.SelectSingleNode("cbc:ResponseCode", nsManager)?.InnerText ?? string.Empty;
+                        string str_DescripcionRespuestaSunat = responseNode?.SelectSingleNode("cbc:Description", nsManager)?.InnerText ?? string.Empty;
+
+                        // ── cbc:Note (pueden ser varios) ──
+                        var listaNotas = new List<string>();
+                        XmlNodeList noteNodes = obj_XmlSunat.SelectNodes("//ar:ApplicationResponse/cbc:Note", nsManager);
+                        if (noteNodes != null)
                         {
-                            str_hashCode = hashNode.InnerText;
+                            foreach (XmlNode note in noteNodes)
+                            {
+                                listaNotas.Add(note.InnerText);
+                            }
                         }
+                        string str_Notas = string.Join(" || ", listaNotas);
 
+                        // ── Armado del resultado ──
                         if (str_CodigoRespuestaSunat == "0")
                         {
                             obj_retorno.codigo = "00";
-                            obj_retorno.mensaje="AP|" + str_hashCode + "|" + str_DescripcionRespuestaSunat + "|" + str_Token;
+                            obj_retorno.mensaje = "AP|" + str_DescripcionRespuestaSunat;
+
+                            obj_retorno.detalle = (listaNotas.Any() ?  str_Notas : "");
                         }
                         else
                         {
@@ -194,9 +207,6 @@ namespace ServicioRSNetCore.Controllers.Funciones
                         pdfResponse.EnsureSuccessStatusCode();
 
                        pdfBytes = pdfResponse.Content.ReadAsByteArrayAsync().Result;
-
-
-                        File.WriteAllBytes("C:\\PANDA\\INVERSOL\\prueba.pdf", pdfBytes);
 
                         //str_Resultado = "00|Adjunto descargando.";
                         return pdfBytes;                       
