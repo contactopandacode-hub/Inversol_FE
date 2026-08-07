@@ -799,7 +799,7 @@ namespace ServicioRSNetCore.Controllers.Funciones
                     str_DetraccionNumeroCuentaFormaPago = "001";
                     str_ComprobanteTipoOperacion = "1001";
                     str_DetraccionCodigoBienServicio = "3000";
-                    str_DetraccionValorBienServicio = documentos.DetraccionCodigo;
+                    str_DetraccionValorBienServicio = ls_codigodetraccion.Trim();
                 }
                 
                 if (documentos.CodigoFiscal == "03" || documentos.TipoDocumentoReferencia == "03")
