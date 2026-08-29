@@ -149,7 +149,7 @@ namespace ServicioRSNetCore.Controllers.Funciones
             return obj_retorno;
         }
 
-        public byte[] ObtenerAdjuntosByte(COBEC_DatosAdjunto request)
+        public COBEc_Error ObtenerAdjuntosByte(COBEC_DatosAdjunto request)
         {
             string str_Resultado = string.Empty;
             COBEc_Error obj_retorno = new COBEc_Error();
@@ -179,9 +179,8 @@ namespace ServicioRSNetCore.Controllers.Funciones
 
                     if (obj_Resultado["error"] != null)
                     {
-
-                        //obj_retorno.codigo = "01";
-                        //obj_retorno.mensaje = obj_Resultado["error"].ToString() + "-" + obj_Resultado["error_description"].ToString();
+                        obj_retorno.codigo = "01";
+                        obj_retorno.mensaje = obj_Resultado["error"].ToString() + "-" + obj_Resultado["error_description"].ToString();
                     }
 
                     string str_Token = obj_Resultado["access_token"].ToString();
@@ -204,31 +203,36 @@ namespace ServicioRSNetCore.Controllers.Funciones
                             pdfUrl = request.url + "/v1/cdr/" + request.identificador;
 
                         var pdfResponse = pdfClient.GetAsync(pdfUrl).Result;
-                        pdfResponse.EnsureSuccessStatusCode();
+                        if (pdfResponse.IsSuccessStatusCode)
+                        {
+                            pdfResponse.EnsureSuccessStatusCode();
+                            pdfBytes = pdfResponse.Content.ReadAsByteArrayAsync().Result;
 
-                       pdfBytes = pdfResponse.Content.ReadAsByteArrayAsync().Result;
-
-                        //str_Resultado = "00|Adjunto descargando.";
-                        return pdfBytes;                       
+                            obj_retorno.codigo = "00";
+                            obj_retorno.archivoByte = pdfBytes;
+                        }else
+                        {
+                            //var errorContent = pdfResponse.Content.ReadAsStringAsync();
+                            obj_retorno.codigo = "01";
+                            obj_retorno.mensaje = "No se encontro informacion del comprobante.";
+                        }
+                                            
                     }
                 }
 
             }
             catch (HttpRequestException ex)
             {
-
-                //obj_retorno.codigo = "01";
-                //obj_retorno.mensaje = "Error al descargar el Adjunto: " + ex.Message;
+                obj_retorno.codigo = "01";
+                obj_retorno.mensaje = "Error al descargar el Adjunto: " + ex.Message;
             }
             catch (Exception ex)
             {
-               
-
-                //obj_retorno.codigo = "02";
-                //obj_retorno.mensaje = "Error no controlado: " + ex.Message;
+                obj_retorno.codigo = "02";
+                obj_retorno.mensaje = "Error : " + ex.Message;
             }
 
-            return pdfBytes;
+            return obj_retorno;
         }
     }
 }

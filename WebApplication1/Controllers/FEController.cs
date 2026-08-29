@@ -102,12 +102,18 @@ namespace ServicioRSNetCore.Controllers
         public IActionResult ObtenerAdjuntosByte([FromBody] COBEC_DatosAdjunto request)
         {
             COBEc_Error obj_error = new COBEc_Error();
-            byte[] pdfBytes = new byte[0];
             EFACTGeneral obj_procesar = new EFACTGeneral(configuration, this.context);
             try
             {
-                pdfBytes = obj_procesar.ObtenerAdjuntosByte(request);                
-                return File(pdfBytes, "application/pdf");
+                COBEc_Error obj_retorno = obj_procesar.ObtenerAdjuntosByte(request);
+                if (obj_retorno.codigo == "00")
+                {
+                    return File(obj_retorno.archivoByte, "application/pdf");
+                }
+                else
+                {
+                    return NotFound(obj_retorno);
+                }
             }
             catch (Exception e)
             {

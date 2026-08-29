@@ -8,5 +8,6 @@ namespace COBE
     {
         public string codigo { get; set; }
         public string mensaje { get; set; }
+        public byte[] archivoByte { get; set; }
     }
 }
